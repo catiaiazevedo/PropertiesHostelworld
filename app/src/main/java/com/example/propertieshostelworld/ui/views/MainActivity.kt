@@ -1,7 +1,8 @@
-package com.example.propertieshostelworld
+package com.example.propertieshostelworld.ui.views
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.example.propertieshostelworld.R
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
