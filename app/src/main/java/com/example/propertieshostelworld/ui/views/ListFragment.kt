@@ -15,7 +15,6 @@ import com.example.propertieshostelworld.model.Location
 import com.example.propertieshostelworld.model.Property
 import com.example.propertieshostelworld.ui.adapters.ItemsAdapter
 import com.example.propertieshostelworld.ui.viewmodels.ListViewModel
-import com.example.propertieshostelworld.ui.viewmodels.ListViewModelFactory
 
 class ListFragment : Fragment(), ItemsAdapter.ItemClickListener<Property, Location> {
     lateinit var viewModel: ListViewModel
@@ -31,8 +30,7 @@ class ListFragment : Fragment(), ItemsAdapter.ItemClickListener<Property, Locati
             it.setClickListener(this)
         }
 
-        //get ListViewModel instance using ViewModelProvider.Factory
-        viewModel = ViewModelProvider(this, ListViewModelFactory())[ListViewModel::class.java]
+        viewModel = ViewModelProvider(this)[ListViewModel::class.java]
 
         with(viewModel) {
             properties.observe(requireActivity(), Observer {
