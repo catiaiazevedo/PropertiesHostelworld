@@ -1,3 +1,5 @@
 <resources>
-    <string name="app_name">PropertiesHostelworld</string>
+    <string name="app_name">Properties Hostelworld</string>
+    <string name="button_pick_room">Pick a Room</string>
+    <string name="hardcoded_since">from</string>
 </resources>
