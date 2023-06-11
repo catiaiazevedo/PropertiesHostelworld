@@ -11,6 +11,7 @@ import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
+import retrofit2.Response
 
 class ListViewModel: ViewModel() {
     private val TAG = "ListViewModel"
@@ -25,28 +26,23 @@ class ListViewModel: ViewModel() {
         val response = client.getService().getAllProperties()
         response.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(getPropertyResultsObserver())
-    }
+            .subscribe(object : Observer<Response<PropertyResults>> {
+                override fun onNext(response: Response<PropertyResults>) {
+                    properties.postValue(response.body()?.properties)
+                    location.postValue(response.body()?.location)
+                }
 
-    private fun getPropertyResultsObserver(): Observer<PropertyResults> {
-        return object : Observer<PropertyResults> {
+                override fun onSubscribe(d: Disposable) {
+                    disposable = d
+                }
 
-            override fun onNext(property: PropertyResults) {
-                properties.postValue(property.properties)
-                location.postValue(property.location)
-            }
+                override fun onComplete() {
+                    Log.d(TAG, "COMPLETED")
+                }
 
-            override fun onSubscribe(d: Disposable) {
-                disposable = d
-            }
-
-            override fun onComplete() {
-                Log.d(TAG, "COMPLETED")
-            }
-
-            override fun onError(e: Throwable) {
-                Log.e(TAG, e.message.toString())
-            }
-        }
+                override fun onError(e: Throwable) {
+                    Log.e(TAG, e.message.toString())
+                }
+            })
     }
 }

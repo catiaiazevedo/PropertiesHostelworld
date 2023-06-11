@@ -7,10 +7,10 @@ import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 
-private const val BASE_URL = "https://gist.githubusercontent.com"
+const val BASE_URL = "https://gist.githubusercontent.com/"
 
 class RetrofitClient {
-    private fun getRetrofitInstance(): Retrofit {
+    fun getRetrofitInstance(): Retrofit {
         val httpclient: OkHttpClient.Builder = OkHttpClient.Builder()
         httpclient.addInterceptor { chain: Interceptor.Chain ->
             val request: Request = chain.request().newBuilder()
