@@ -15,7 +15,9 @@ import com.example.propertieshostelworld.model.Location
 import com.example.propertieshostelworld.model.Property
 import com.example.propertieshostelworld.ui.adapters.ItemsAdapter
 import com.example.propertieshostelworld.ui.viewmodels.ListViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class ListFragment : Fragment(), ItemsAdapter.ItemClickListener<Property, Location> {
     lateinit var viewModel: ListViewModel
 
