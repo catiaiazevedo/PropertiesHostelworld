@@ -67,6 +67,8 @@ dependencies {
     // Junit
     testImplementation 'androidx.test:core-ktx:1.5.0'
     testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4'
+    testImplementation 'androidx.arch.core:core-testing:2.2.0'
+    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.1.0'
     // Mockito
     testImplementation 'org.mockito:mockito-core:5.1.1'
     // Dagger - Hilt
