@@ -42,7 +42,7 @@ class ListFragment : Fragment(), ItemsAdapter.ItemClickListener<Property, Locati
                 itemsAdapter.updateLocation(it)
             })
 
-            callApi()
+            callAll()
         }
 
         return binding.root
