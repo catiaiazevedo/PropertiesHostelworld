@@ -1,14 +1,14 @@
 package com.example.propertieshostelworld.ui.viewmodels
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import com.example.propertieshostelworld.model.City
+import com.example.propertieshostelworld.model.Image
+import com.example.propertieshostelworld.model.Location
+import com.example.propertieshostelworld.model.Price
 import com.example.propertieshostelworld.model.Property
 import com.example.propertieshostelworld.model.PropertyResults
+import com.example.propertieshostelworld.model.Rating
 import com.example.propertieshostelworld.repository.PropertyRepository
-import io.reactivex.Observable
-import io.reactivex.Observer
-import io.reactivex.android.plugins.RxAndroidPlugins
-import io.reactivex.plugins.RxJavaPlugins
-import io.reactivex.schedulers.Schedulers
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
@@ -21,8 +21,8 @@ import kotlin.collections.ArrayList
 class ListViewModelTest {
     @get:Rule var rule: TestRule = InstantTaskExecutorRule()
 
-    private lateinit var repository: PropertyRepository
     private lateinit var viewModel: ListViewModel
+    private lateinit var repository: PropertyRepository
 
     @Before
     fun setUp() {
@@ -30,33 +30,37 @@ class ListViewModelTest {
         viewModel = ListViewModel(repository)
     }
 
-    @Before
-    fun setupSchedulers() {
-        RxAndroidPlugins.setMainThreadSchedulerHandler { Schedulers.trampoline() }
-        RxJavaPlugins.setIoSchedulerHandler { Schedulers.trampoline() }
+    @Test
+    fun callApi_onNext() {
+        val properties = ArrayList<Property>()
+        properties.add(Property("Hostel X", Rating(80), "Nice", Price(8.5), listOf(Image("", ""))))
+
+        val location = Location(City("Dublin", "Ireland"))
+
+        Mockito.`when`(repository.getProperties(any())).then {
+            it.getArgument<PropertyRepository.ApiObserver>(0).onNext(Response.success(PropertyResults(properties, location)))
+        }
+
+        viewModel.callApi()
+
+        assertEquals(properties, viewModel.properties.value)
+        assertEquals(location, viewModel.location.value)
     }
 
-    //I changed ListViewModel implementation to allow testing and everything seemed to be correct unless the
-    //.observeOn(AndroidSchedulers.mainThread()), that even with Schedulers.trampoline() continues to give
-    //java.lang.NullPointerException (.subscribeOn(Schedulers.io()) passes)
-    //My goal was to test all the methods of the interface, being them onNext, onSubscribe, onComplete, onError
-    //but for all of them callApi needs to be called where Schedulers for io and ui need to be provided and the same
-    //problem occurs
+
     @Test
     fun callApi_onError() {
-        val observer = viewModel.observer
-        val response = object: Observable<Response<PropertyResults>>() {
-            override fun subscribeActual(observer: Observer<in Response<PropertyResults>>?) {}
+        Mockito.`when`(repository.getProperties(any())).then {
+            it.getArgument<PropertyRepository.ApiObserver>(0).onError(Throwable())
         }
 
-        Mockito.`when`(repository.getAllProperties()).thenReturn(response)
-
-        Mockito.`when`(viewModel.setResponse(observer, response)).then {
-            observer.onError(Throwable())
-        }
-
-        viewModel.callAll()
+        viewModel.callApi()
 
         assertEquals(ArrayList<Property>(), viewModel.properties.value)
+        assertEquals(Location(City("","")), viewModel.location.value)
+    }
+
+    private fun <T> any(): T {
+        return org.mockito.ArgumentMatchers.any()
     }
 }
